@@ -8,6 +8,7 @@
 ///
 
 import 'package:pspdfkit_flutter/src/web/pspdfkit_web_instance.dart';
+
 import '../../pspdfkit.dart';
 import '../web/pspdfkit_web.dart';
 
@@ -59,6 +60,11 @@ class PspdfkitWidgetControllerWeb extends PspdfkitWidgetController {
   Future<bool?> importXfdf(String xfdfPath) async {
     await pspdfkitInstance.importXfdf(xfdfPath);
     return Future.value(true);
+  }
+
+  @override
+  Future<bool?> jumpToPage(int pageIndex) async {
+    throw UnimplementedError('This method id not supported on the web!');
   }
 
   @override

@@ -422,6 +422,13 @@ internal class PSPDFKitView(
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(result::success)
             }
+
+            "jumpToPage" -> {
+                val pageIndex: Int = requireNotNull(call.argument("pageIndex"))
+                pdfUiFragment.setPageIndex(pageIndex)
+                result.success(true)
+            }
+
             "setAnnotationPresetConfigurations" -> {
                 try {
                     val annotationConfigurations =

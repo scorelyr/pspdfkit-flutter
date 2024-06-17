@@ -60,6 +60,8 @@ abstract class PspdfkitWidgetController {
     Map<AnnotationTool, AnnotationConfiguration> configurations,
   );
 
+  Future<bool?> jumpToPage(int pageIndex);
+
   /// Sets the annotation preset configurations for the given annotation tools.
   /// @param eventName The name of the event to listen to.
   void addEventListener(String eventName, Function(dynamic) callback);

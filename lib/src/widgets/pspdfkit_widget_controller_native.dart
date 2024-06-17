@@ -8,6 +8,7 @@
 ///
 
 import 'package:flutter/services.dart';
+
 import '../../pspdfkit.dart';
 import '../document/pdf_document_native.dart';
 
@@ -113,6 +114,13 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
       }),
     });
     return true;
+  }
+
+  @override
+  Future<bool?> jumpToPage(int pageIndex) async {
+    await _channel.invokeMethod('jumpToPage', <String, int>{
+      'pageIndex': pageIndex,
+    });
   }
 
   @override

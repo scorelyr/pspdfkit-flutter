@@ -111,11 +111,11 @@
         NSArray<NSDictionary<NSString *,NSObject *> *> *pages = call.arguments[@"pages"];
         NSURL *processedDocumentURL = [PspdfkitFlutterHelper writableFileURLWithPath:outputPath override:YES copyIfNeeded:NO];
         [PspdfkitPdfGenerator generatePdfWithPages:pages outputUrl:processedDocumentURL results:result];
-        
+
     } else if ([@"setDelayForSyncingLocalChanges" isEqualToString:call.method]){
-          
+
         NSNumber *delay = call.arguments[@"delay"];
-        
+
           if (delay == nil || [delay doubleValue] < 0) {
             result([FlutterError errorWithCode:@"InvalidArgument"
             message:@"Delay must be a positive number"
@@ -133,10 +133,10 @@
             message:@"Delay can only be set for Instant documents"
             details:nil]);
         }
-        
+
      } else if ([@"setListenToServerChanges" isEqualToString:call.method]){
          BOOL listenToServerChanges = [call.arguments[@"listen"] boolValue];
-        
+
         if ([pdfViewController isKindOfClass:[InstantDocumentViewController class]]) {
             InstantDocumentViewController *instantDocumentViewController = (InstantDocumentViewController *)pdfViewController;
             instantDocumentViewController.shouldListenForServerChangesWhenVisible = listenToServerChanges;
@@ -186,6 +186,14 @@
         } @catch (NSException *exception) {
             result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
         }
+    } else if ([@"jumpToPage" isEqualToString:call.method]) {
+        @try {
+            PSPDFPageIndex pageIndex = [call.arguments[@"pageIndex"] longLongValue];
+            [pdfViewController setPageIndex:pageIndex animated:YES];
+            result(@(YES));
+        } @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
+        }
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -201,7 +209,7 @@
     } else {
         url = [NSBundle.mainBundle URLForResource:path withExtension:nil];
     }
-    
+
     if (url == nil) {
         return nil;
     }

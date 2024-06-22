@@ -28,8 +28,10 @@ import com.pspdfkit.forms.ChoiceFormElement
 import com.pspdfkit.forms.EditableButtonFormElement
 import com.pspdfkit.forms.SignatureFormElement
 import com.pspdfkit.forms.TextFormElement
+import com.pspdfkit.preferences.PSPDFKitPreferences
 import com.pspdfkit.ui.PdfUiFragment
 import com.pspdfkit.ui.PdfUiFragmentBuilder
+import com.pspdfkit.ui.special_mode.controller.AnnotationTool
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -84,6 +86,7 @@ internal class PSPDFKitView(
                     .fragmentClass(FlutterPdfUiFragment::class.java)
                     .build()
             } else {
+                Log.d(LOG_TAG, "Configuration: $pdfConfiguration")
                 PdfUiFragmentBuilder.fromUri(context, uri)
                     .configuration(pdfConfiguration)
                     .fragmentClass(FlutterPdfUiFragment::class.java)
@@ -425,7 +428,19 @@ internal class PSPDFKitView(
 
             "jumpToPage" -> {
                 val pageIndex: Int = requireNotNull(call.argument("pageIndex"))
-                pdfUiFragment.setPageIndex(pageIndex)
+                pdfUiFragment.pageIndex = pageIndex
+                result.success(true)
+            }
+
+            "isShowingTwoPages" -> {
+                val pageIndex = pdfUiFragment.pdfFragment?.pageIndex ?: -1
+                result.success(pdfUiFragment.pdfFragment?.getSiblingPageIndex(pageIndex) != -1)
+            }
+
+            "enterAnnotationCreationMode" -> {
+                val authorName: String = requireNotNull(call.argument("authorName"))
+                PSPDFKitPreferences.get(context).setAnnotationCreator(authorName)
+                pdfUiFragment.pdfFragment?.enterAnnotationCreationMode(AnnotationTool.INK)
                 result.success(true)
             }
 

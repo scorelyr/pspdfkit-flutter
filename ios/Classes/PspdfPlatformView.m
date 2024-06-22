@@ -31,7 +31,7 @@
 }
 
 - (instancetype)initWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
-    
+
     if ((self = [super init])) {
         _channel = [FlutterMethodChannel methodChannelWithName:[NSString stringWithFormat:@"com.pspdfkit.widget.%lld", viewId] binaryMessenger:messenger];
         _broadcastChannel = [FlutterMethodChannel methodChannelWithName:@"com.pspdfkit.global" binaryMessenger:messenger];
@@ -54,12 +54,12 @@
             NSLog(@"Warning: 'document' argument is not a string. Showing an empty view in default configuration.");
             _pdfViewController = [[PSPDFViewController alloc] init];
         } else {
-           
+
             NSDictionary *configurationDictionary = [PspdfkitFlutterConverter processConfigurationOptionsDictionaryForPrefix:args[@"configuration"]];
             PSPDFDocument *document = [PspdfkitFlutterHelper documentFromPath:documentPath];
-            
+
             NSArray *measurementValueConfigurations = configurationDictionary[@"measurementValueConfigurations"];
-          
+
             [PspdfkitFlutterHelper unlockWithPasswordIfNeeded:document dictionary:configurationDictionary];
 
             BOOL isImageDocument = [PspdfkitFlutterHelper isImageDocument:documentPath];
@@ -68,7 +68,7 @@
             _pdfViewController.appearanceModeManager.appearanceMode = [PspdfkitFlutterConverter appearanceMode:configurationDictionary];
             _pdfViewController.pageIndex = [PspdfkitFlutterConverter pageIndex:configurationDictionary];
             _pdfViewController.delegate = self;
-            
+
             [NSNotificationCenter.defaultCenter addObserver:self selector:@selector(documentDidFinishRendering) name:PSPDFDocumentViewControllerDidConfigureSpreadViewNotification object:nil];
 
             if ((id)configurationDictionary != NSNull.null) {
@@ -88,11 +88,12 @@
                 if (configurationDictionary[key]) {
                     [PspdfkitFlutterHelper setToolbarTitle:configurationDictionary[key] forViewController:_pdfViewController];
                 }
-                
+
                 NSArray *annotationToolbarGroupingitems = configurationDictionary[@"toolbarItemGrouping"];
-                
+
                 if (annotationToolbarGroupingitems){
                     PSPDFAnnotationToolbarConfiguration *configuration = [AnnotationToolbarItemsGrouping convertAnnotationToolbarConfigurationWithToolbarItems:annotationToolbarGroupingitems];
+                    NSLog(@"annotationToolbarGroupingitems %@", configuration);
                     _pdfViewController.annotationToolbarController.annotationToolbar.configurations = @[configuration];
                 }
             }
@@ -104,8 +105,10 @@
             }
         }
 
+        NSLog(@"UserInterfaceViewMode is never? %@", _pdfViewController.configuration.userInterfaceViewMode == PSPDFUserInterfaceViewModeNever ? @"YES" : @"NO");
         if (_pdfViewController.configuration.userInterfaceViewMode == PSPDFUserInterfaceViewModeNever) {
             // In this mode PDFViewController doesn’t hide the navigation bar on its own to avoid getting stuck.
+            NSLog(@"Hiding navigation bar");
             _navigationController.navigationBarHidden = YES;
         }
         [_navigationController setViewControllers:@[_pdfViewController] animated:NO];
@@ -121,7 +124,7 @@
 
 - (void)documentDidFinishRendering {
     // Remove observer after the initial notification
-    [NSNotificationCenter.defaultCenter removeObserver:self 
+    [NSNotificationCenter.defaultCenter removeObserver:self
                                                   name:PSPDFDocumentViewControllerDidConfigureSpreadViewNotification
                                                 object:nil];
     NSString *documentId = self.pdfViewController.document.UID;

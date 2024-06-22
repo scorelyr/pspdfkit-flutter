@@ -68,6 +68,16 @@ class PspdfkitWidgetControllerWeb extends PspdfkitWidgetController {
   }
 
   @override
+  Future<bool?> isShowingTwoPages() async {
+    throw UnimplementedError('This method id not supported on the web!');
+  }
+
+  @override
+  Future<bool?> enterAnnotationCreationMode(String authorName) async {
+    throw UnimplementedError('This method id not supported on the web!');
+  }
+
+  @override
   Future<bool?> processAnnotations(
       String type, String processingMode, String destinationPath) {
     throw UnimplementedError('This method id not supported on the web!');

@@ -194,6 +194,20 @@
         } @catch (NSException *exception) {
             result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
         }
+    } else if([@"enterAnnotationCreationMode" isEqualToString:call.method]){
+        @try {
+            NSString *authorName = call.arguments[@"authorName"];
+            PSPDFUsernameHelper.defaultAnnotationUsername = authorName;
+
+            [pdfViewController.annotationToolbarController showToolbarAnimated:YES completion:^(BOOL finished) {
+                if (finished) {
+                    [pdfViewController.annotationStateManager setState:PSPDFAnnotationStringInk variant:PSPDFAnnotationVariantStringInkPen];
+                }
+            }];
+            result(@(YES));
+        } @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
+        }
     } else {
         result(FlutterMethodNotImplemented);
     }

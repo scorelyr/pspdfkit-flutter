@@ -18,6 +18,101 @@ enum PspdfkitScrollDirection {
   vertical,
 }
 
+enum PspdfkitAnnotationTool {
+  ///Indicates that no annotation tool is selected.
+  none,
+
+  /// Creates highlight text markup annotations.
+  highlight,
+
+  /// Creates strikeout text markup annotations.
+  strikeout,
+
+  /// Creates underline text markup annotations.
+  underline,
+
+  /// Creates squiggly text markup annotations.
+  squiggly,
+
+  /// Creates free-text annotations.
+  freetext,
+
+  /// Creates free-text callout annotations.
+  freetextCallout,
+
+  /// Creates ink annotations.
+  ink,
+
+  /// Magic ink tool. Creates ink annotations or similar shape annotations (line, square, circle).
+  magicInk,
+
+  /// Creates ink annotation from user/customer signature.
+  signature,
+
+  /// Creates note annotations.
+  note,
+
+  /// Creates line annotations.
+  line,
+
+  /// Creates square annotations.
+  square,
+
+  /// Creates circle annotations.
+  circle,
+
+  /// Creates polygon annotations.
+  polygon,
+
+  /// Creates polyline annotations.
+  polyline,
+
+  /// Creates a distance measurement annotation.
+  measurementDistance,
+
+  /// Creates a perimeter measurement annotation.
+  measurementPerimeter,
+
+  /// Creates a polygonal area measurement annotation.
+  measurementAreaPolygon,
+
+  /// Creates an elliptical area measurement annotation.
+  measurementAreaEllipse,
+
+  /// Creates a rectangular area measurement annotation.
+  measurementAreaRect,
+
+  /// Creates a rectangular area measurement annotation.
+  measurementScaleCalibration,
+
+  /// Creates stamp annotations from pre-built stamps.
+  stamp,
+
+  /// Creates stamp annotation from user supplied bitmaps.
+  image,
+
+  /// Creates stamp annotation from camera image.
+  camera,
+
+  /// Creates sound annotations.
+  sound,
+
+  /// Ink eraser.
+  eraser,
+
+  /// Annotation redaction.
+  redaction,
+
+  /// A freely placeable Instant Comments thread.
+  instantCommentMarker,
+
+  /// A text highlight that acts as the root for an Instant Comments thread.
+  instantHighlightComment,
+
+  /// Allows selection of multiple annotations
+  annotationMultiSelection;
+}
+
 /// Enum representing the available page transition modes in PSPDFKit.
 ///
 /// The available modes are:
@@ -253,6 +348,8 @@ typedef PdfDocumentLoadedCallback = void Function(PdfDocument document);
 typedef PdfDocumentLoadFailedCallback = void Function(String error);
 
 typedef PageChangedCallback = void Function(int pageIndex);
+
+typedef AnnotationUpdateCallback = void Function(String annotationId);
 
 extension WebShowSignatureValidationStatusMode
     on ShowSignatureValidationStatusMode {

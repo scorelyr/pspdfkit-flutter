@@ -9,13 +9,15 @@
 library pspdfkit_widget;
 
 import 'dart:async';
-import 'package:flutter/services.dart';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:pspdfkit_flutter/pspdfkit.dart';
+
 import 'pspdfkit_widget_controller_native.dart';
 
 class PspdfkitWidget extends StatefulWidget {
@@ -25,6 +27,10 @@ class PspdfkitWidget extends StatefulWidget {
   final PdfDocumentLoadedCallback? onPdfDocumentLoaded;
   final PdfDocumentLoadFailedCallback? onPdfDocumentError;
   final PageChangedCallback? onPageChanged;
+  final AnnotationUpdateCallback? onAnnotationCreated;
+  final AnnotationUpdateCallback? onAnnotationUpdated;
+  final AnnotationUpdateCallback? onAnnotationRemoved;
+  final VoidCallback? onExitAnnotationCreationMode;
 
   const PspdfkitWidget({
     Key? key,
@@ -34,6 +40,10 @@ class PspdfkitWidget extends StatefulWidget {
     this.onPdfDocumentLoaded,
     this.onPdfDocumentError,
     this.onPageChanged,
+    this.onAnnotationCreated,
+    this.onAnnotationUpdated,
+    this.onAnnotationRemoved,
+    this.onExitAnnotationCreationMode,
   }) : super(key: key);
 
   @override
@@ -118,6 +128,10 @@ class _PspdfkitWidgetState extends State<PspdfkitWidget> {
       onPageChanged: widget.onPageChanged,
       onPdfDocumentLoadFailed: widget.onPdfDocumentError,
       onPdfDocumentLoaded: widget.onPdfDocumentLoaded,
+      onAnnotationCreated: widget.onAnnotationCreated,
+      onAnnotationRemoved: widget.onAnnotationRemoved,
+      onAnnotationUpdated: widget.onAnnotationUpdated,
+      onExitAnnotationCreationMode: widget.onExitAnnotationCreationMode,
     );
     widget.onPspdfkitWidgetCreated?.call(controller);
   }

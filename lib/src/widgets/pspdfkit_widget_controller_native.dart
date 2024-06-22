@@ -21,6 +21,10 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
     PdfDocumentLoadedCallback? onPdfDocumentLoaded,
     PdfDocumentLoadFailedCallback? onPdfDocumentLoadFailed,
     PageChangedCallback? onPageChanged,
+    AnnotationUpdateCallback? onAnnotationCreated,
+    AnnotationUpdateCallback? onAnnotationUpdated,
+    AnnotationUpdateCallback? onAnnotationRemoved,
+    VoidCallback? onExitAnnotationCreationMode,
   }) : _channel = MethodChannel('com.pspdfkit.widget.$id') {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
@@ -38,6 +42,20 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
           var pageIndex = call.arguments['pageIndex'];
           onPageChanged?.call(pageIndex);
           break;
+        case 'onAnnotationCreated':
+          var annotationId = call.arguments['annotationId'];
+          onAnnotationCreated?.call(annotationId);
+          break;
+        case 'onAnnotationUpdated':
+          var annotationId = call.arguments['annotationId'];
+          onAnnotationUpdated?.call(annotationId);
+          break;
+        case 'onAnnotationRemoved':
+          var annotationId = call.arguments['annotationId'];
+          onAnnotationRemoved?.call(annotationId);
+          break;
+        case 'onExitAnnotationCreationMode':
+          onExitAnnotationCreationMode?.call();
       }
     });
   }
@@ -121,6 +139,21 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
     await _channel.invokeMethod('jumpToPage', <String, int>{
       'pageIndex': pageIndex,
     });
+  }
+
+  @override
+  Future<bool?> isShowingTwoPages() async {
+    final result = await _channel.invokeMethod('isShowingTwoPages');
+    return result;
+  }
+
+  @override
+  Future<bool?> enterAnnotationCreationMode(String authorName) async {
+    final result = await _channel
+        .invokeMethod('enterAnnotationCreationMode', <String, String>{
+      'authorName': authorName,
+    });
+    return result;
   }
 
   @override

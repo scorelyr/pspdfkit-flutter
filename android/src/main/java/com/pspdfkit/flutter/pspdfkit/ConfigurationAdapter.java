@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 
+import com.pspdfkit.annotations.AnnotationType;
 import com.pspdfkit.annotations.measurements.MeasurementValueConfiguration;
 import com.pspdfkit.configuration.PdfConfiguration;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
@@ -78,6 +79,7 @@ class ConfigurationAdapter {
     private static final String ENABLE_DOCUMENT_EDITOR = "enableDocumentEditor";
     private static final String DARK_THEME_RESOURCE = "darkThemeResource";
     private static final String DEFAULT_THEME_RESOURCE = "defaultThemeResource";
+    private static final String RESTORE_LAST_VIEWED_PAGE = "restoreLastViewedPage";
 
     // Thumbnail Options
     private static final String SHOW_THUMBNAIL_BAR = "showThumbnailBar";
@@ -189,7 +191,7 @@ class ConfigurationAdapter {
     private static final String ENABLED_MEASUREMENT_TOOLS = "enableMeasurementTools";
     private static final String ENABLE_MAGNIFIER = "enableMagnifier";
     private static final String ENABLED_MEASUREMENT_TOOL_SNAPPING = "enableMeasurementToolSnapping";
-    
+
     @NonNull
     private final PdfActivityConfiguration.Builder configuration;
     @Nullable
@@ -386,6 +388,11 @@ class ConfigurationAdapter {
             key = getKeyOfType(configurationMap, ENABLED_MEASUREMENT_TOOL_SNAPPING, Boolean.class);
             if (key != null) {
                 configureMeasurementToolSnappingEnabled(context,(Boolean) configurationMap.get(key));
+            }
+
+            key = getKeyOfType(configurationMap, RESTORE_LAST_VIEWED_PAGE, Boolean.class);
+            if (key != null) {
+                configureRestoreLastViewedPage((Boolean) configurationMap.get(key));
             }
         }
     }
@@ -674,6 +681,10 @@ class ConfigurationAdapter {
         } else {
             configuration.hideNavigationButtons();
         }
+    }
+
+    private void configureRestoreLastViewedPage(boolean restoreLastViewedPage) {
+        configuration.restoreLastViewedPage(restoreLastViewedPage);
     }
 
     private static int getStyleResourceId(@NonNull String styleName, @NonNull Context context) {

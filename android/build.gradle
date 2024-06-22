@@ -32,6 +32,18 @@ rootProject.allprojects {
     }
 }
 
+buildscript {
+    ext {
+        kotlinVersion = "1.5.20"
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 

@@ -60,7 +60,14 @@ abstract class PspdfkitWidgetController {
     Map<AnnotationTool, AnnotationConfiguration> configurations,
   );
 
+  /// Jumps immediately to the given page index.
   Future<bool?> jumpToPage(int pageIndex);
+
+  /// Returns true if the document is showing two pages.
+  /// This is especially useful when the page layout mode is automatic
+  Future<bool?> isShowingTwoPages();
+
+  Future<bool?> enterAnnotationCreationMode(String authorName);
 
   /// Sets the annotation preset configurations for the given annotation tools.
   /// @param eventName The name of the event to listen to.

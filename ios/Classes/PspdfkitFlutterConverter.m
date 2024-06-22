@@ -186,12 +186,12 @@
         if (dictionary[key]){
             builder.autosaveEnabled = ![dictionary[key] boolValue];
         }
-        
+
         key = @"disableAutosave";
         if (dictionary[key]){
             builder.autosaveEnabled = ![dictionary[key] boolValue];
         }
-        
+
     }];
 }
 
@@ -213,6 +213,7 @@
 + (PSPDFUserInterfaceViewMode)userInterfaceViewMode:(NSDictionary *)dictionary forKey:(NSString *)key {
     PSPDFUserInterfaceViewMode userInterfaceMode = PSPDFConfiguration.defaultConfiguration.userInterfaceViewMode;
     NSString *value = dictionary[key];
+    NSLog(@"userInterfaceViewMode %@", value);
     if (value) {
         if ([value isEqualToString:@"automatic"]) {
             userInterfaceMode = PSPDFUserInterfaceViewModeAutomatic;

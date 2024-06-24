@@ -90,7 +90,7 @@ class FlutterPdfUiFragmentCallbacks(
                     methodChannel.invokeMethod(
                         "onAnnotationCreated",
                         mapOf(
-                            "annotationId" to annotation.uuid,
+                            "annotationJsonString" to annotation.toInstantJson(),
                         )
                     )
                 }
@@ -99,7 +99,7 @@ class FlutterPdfUiFragmentCallbacks(
                     methodChannel.invokeMethod(
                         "onAnnotationUpdated",
                         mapOf(
-                            "annotationId" to annotation.uuid,
+                            "annotationJsonString" to annotation.toInstantJson(),
                         )
                     )
                 }
@@ -108,7 +108,7 @@ class FlutterPdfUiFragmentCallbacks(
                     methodChannel.invokeMethod(
                         "onAnnotationRemoved",
                         mapOf(
-                            "annotationId" to annotation.uuid,
+                            "annotationUuid" to annotation.uuid,
                         )
                     )
                 }

@@ -43,16 +43,16 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
           onPageChanged?.call(pageIndex);
           break;
         case 'onAnnotationCreated':
-          var annotationId = call.arguments['annotationId'];
-          onAnnotationCreated?.call(annotationId);
+          var annotationJsonString = call.arguments['annotationJsonString'];
+          onAnnotationCreated?.call(annotationJsonString);
           break;
         case 'onAnnotationUpdated':
-          var annotationId = call.arguments['annotationId'];
-          onAnnotationUpdated?.call(annotationId);
+          var annotationJsonString = call.arguments['annotationJsonString'];
+          onAnnotationUpdated?.call(annotationJsonString);
           break;
         case 'onAnnotationRemoved':
-          var annotationId = call.arguments['annotationId'];
-          onAnnotationRemoved?.call(annotationId);
+          var annotationUuid = call.arguments['annotationUuid'];
+          onAnnotationRemoved?.call(annotationUuid);
           break;
         case 'onExitAnnotationCreationMode':
           onExitAnnotationCreationMode?.call();
@@ -136,9 +136,10 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
 
   @override
   Future<bool?> jumpToPage(int pageIndex) async {
-    await _channel.invokeMethod('jumpToPage', <String, int>{
+    final result = await _channel.invokeMethod('jumpToPage', <String, int>{
       'pageIndex': pageIndex,
     });
+    return result;
   }
 
   @override

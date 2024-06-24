@@ -199,6 +199,14 @@
             NSString *authorName = call.arguments[@"authorName"];
             PSPDFUsernameHelper.defaultAnnotationUsername = authorName;
 
+            PSPDFDocument *document = pdfViewController.document;
+            if (!document || !document.isValid) {
+                result([FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil]);
+                return;
+            }
+            document.defaultAnnotationUsername = authorName;
+
+            [pdfViewController.annotationToolbarController updateHostView:nil container:nil viewController:pdfViewController];
             [pdfViewController.annotationToolbarController showToolbarAnimated:YES completion:^(BOOL finished) {
                 if (finished) {
                     [pdfViewController.annotationStateManager setState:PSPDFAnnotationStringInk variant:PSPDFAnnotationVariantStringInkPen];

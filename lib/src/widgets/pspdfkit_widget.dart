@@ -29,7 +29,7 @@ class PspdfkitWidget extends StatefulWidget {
   final PageChangedCallback? onPageChanged;
   final AnnotationUpdateCallback? onAnnotationCreated;
   final AnnotationUpdateCallback? onAnnotationUpdated;
-  final AnnotationUpdateCallback? onAnnotationRemoved;
+  final AnnotationRemovedCallback? onAnnotationRemoved;
   final VoidCallback? onExitAnnotationCreationMode;
 
   const PspdfkitWidget({

@@ -349,7 +349,9 @@ typedef PdfDocumentLoadFailedCallback = void Function(String error);
 
 typedef PageChangedCallback = void Function(int pageIndex);
 
-typedef AnnotationUpdateCallback = void Function(String annotationId);
+typedef AnnotationUpdateCallback = void Function(String annotationJsonString);
+
+typedef AnnotationRemovedCallback = void Function(String annotationUuid);
 
 extension WebShowSignatureValidationStatusMode
     on ShowSignatureValidationStatusMode {

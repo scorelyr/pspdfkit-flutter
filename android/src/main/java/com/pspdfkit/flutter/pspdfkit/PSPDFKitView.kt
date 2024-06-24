@@ -32,6 +32,7 @@ import com.pspdfkit.preferences.PSPDFKitPreferences
 import com.pspdfkit.ui.PdfUiFragment
 import com.pspdfkit.ui.PdfUiFragmentBuilder
 import com.pspdfkit.ui.special_mode.controller.AnnotationTool
+import com.pspdfkit.ui.special_mode.controller.AnnotationToolVariant
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -440,7 +441,7 @@ internal class PSPDFKitView(
             "enterAnnotationCreationMode" -> {
                 val authorName: String = requireNotNull(call.argument("authorName"))
                 PSPDFKitPreferences.get(context).setAnnotationCreator(authorName)
-                pdfUiFragment.pdfFragment?.enterAnnotationCreationMode(AnnotationTool.INK)
+                pdfUiFragment.pdfFragment?.enterAnnotationCreationMode(AnnotationTool.INK, AnnotationToolVariant.fromPreset(AnnotationToolVariant.Preset.PEN))
                 result.success(true)
             }
 

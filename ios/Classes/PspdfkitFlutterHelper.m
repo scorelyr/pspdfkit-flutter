@@ -194,6 +194,9 @@
         } @catch (NSException *exception) {
             result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
         }
+    } else if([@"isShowingTwoPages" isEqualToString:call.method]) {
+        PSPDFPageIndex pageIndex = pdfViewController.pageIndex;
+        //TODO
     } else if([@"enterAnnotationCreationMode" isEqualToString:call.method]){
         @try {
             NSString *authorName = call.arguments[@"authorName"];

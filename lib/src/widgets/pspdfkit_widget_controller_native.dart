@@ -21,9 +21,6 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
     PdfDocumentLoadedCallback? onPdfDocumentLoaded,
     PdfDocumentLoadFailedCallback? onPdfDocumentLoadFailed,
     PageChangedCallback? onPageChanged,
-    AnnotationUpdateCallback? onAnnotationCreated,
-    AnnotationUpdateCallback? onAnnotationUpdated,
-    AnnotationUpdateCallback? onAnnotationRemoved,
     VoidCallback? onExitAnnotationCreationMode,
   }) : _channel = MethodChannel('com.pspdfkit.widget.$id') {
     _channel.setMethodCallHandler((call) async {
@@ -41,18 +38,6 @@ class PspdfkitWidgetControllerNative extends PspdfkitWidgetController {
         case 'onPageChanged':
           var pageIndex = call.arguments['pageIndex'];
           onPageChanged?.call(pageIndex);
-          break;
-        case 'onAnnotationCreated':
-          var annotationJsonString = call.arguments['annotationJsonString'];
-          onAnnotationCreated?.call(annotationJsonString);
-          break;
-        case 'onAnnotationUpdated':
-          var annotationJsonString = call.arguments['annotationJsonString'];
-          onAnnotationUpdated?.call(annotationJsonString);
-          break;
-        case 'onAnnotationRemoved':
-          var annotationUuid = call.arguments['annotationUuid'];
-          onAnnotationRemoved?.call(annotationUuid);
           break;
         case 'onExitAnnotationCreationMode':
           onExitAnnotationCreationMode?.call();

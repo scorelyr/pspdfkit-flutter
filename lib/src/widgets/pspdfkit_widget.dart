@@ -27,9 +27,6 @@ class PspdfkitWidget extends StatefulWidget {
   final PdfDocumentLoadedCallback? onPdfDocumentLoaded;
   final PdfDocumentLoadFailedCallback? onPdfDocumentError;
   final PageChangedCallback? onPageChanged;
-  final AnnotationUpdateCallback? onAnnotationCreated;
-  final AnnotationUpdateCallback? onAnnotationUpdated;
-  final AnnotationRemovedCallback? onAnnotationRemoved;
   final VoidCallback? onExitAnnotationCreationMode;
 
   const PspdfkitWidget({
@@ -40,9 +37,6 @@ class PspdfkitWidget extends StatefulWidget {
     this.onPdfDocumentLoaded,
     this.onPdfDocumentError,
     this.onPageChanged,
-    this.onAnnotationCreated,
-    this.onAnnotationUpdated,
-    this.onAnnotationRemoved,
     this.onExitAnnotationCreationMode,
   }) : super(key: key);
 
@@ -128,9 +122,6 @@ class _PspdfkitWidgetState extends State<PspdfkitWidget> {
       onPageChanged: widget.onPageChanged,
       onPdfDocumentLoadFailed: widget.onPdfDocumentError,
       onPdfDocumentLoaded: widget.onPdfDocumentLoaded,
-      onAnnotationCreated: widget.onAnnotationCreated,
-      onAnnotationRemoved: widget.onAnnotationRemoved,
-      onAnnotationUpdated: widget.onAnnotationUpdated,
       onExitAnnotationCreationMode: widget.onExitAnnotationCreationMode,
     );
     widget.onPspdfkitWidgetCreated?.call(controller);

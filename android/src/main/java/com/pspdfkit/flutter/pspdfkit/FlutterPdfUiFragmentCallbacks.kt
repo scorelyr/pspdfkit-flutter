@@ -83,44 +83,6 @@ class FlutterPdfUiFragmentCallbacks(
                 }
 
             })
-
-            pdfFragment?.addOnAnnotationUpdatedListener(object :
-                AnnotationProvider.OnAnnotationUpdatedListener {
-                override fun onAnnotationCreated(annotation: Annotation) {
-                    methodChannel.invokeMethod(
-                        "onAnnotationCreated",
-                        mapOf(
-                            "annotationJsonString" to annotation.toInstantJson(),
-                        )
-                    )
-                }
-
-                override fun onAnnotationUpdated(annotation: Annotation) {
-                    methodChannel.invokeMethod(
-                        "onAnnotationUpdated",
-                        mapOf(
-                            "annotationJsonString" to annotation.toInstantJson(),
-                        )
-                    )
-                }
-
-                override fun onAnnotationRemoved(annotation: Annotation) {
-                    methodChannel.invokeMethod(
-                        "onAnnotationRemoved",
-                        mapOf(
-                            "annotationUuid" to annotation.uuid,
-                        )
-                    )
-                }
-
-                override fun onAnnotationZOrderChanged(
-                    p0: Int,
-                    p1: MutableList<Annotation>,
-                    p2: MutableList<Annotation>
-                ) {
-                    // Not implemented
-                }
-            })
         }
     }
 }

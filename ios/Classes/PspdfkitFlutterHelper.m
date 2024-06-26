@@ -195,7 +195,7 @@
             result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
         }
     } else if([@"isShowingTwoPages" isEqualToString:call.method]) {
-        BOOL showingTwoPages = pdfViewController.documentViewController.layout.spreadMode == PSPDFDocumentViewLayoutSpreadModeDouble;
+        BOOL showingTwoPages = pdfViewController.documentViewController.layout.spreadMode != PSPDFDocumentViewLayoutSpreadModeSingle;
         result(@(showingTwoPages));
     } else if([@"enterAnnotationCreationMode" isEqualToString:call.method]){
         @try {

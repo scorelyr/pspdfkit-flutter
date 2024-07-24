@@ -113,16 +113,16 @@
         [PspdfkitPdfGenerator generatePdfWithPages:pages outputUrl:processedDocumentURL results:result];
         
     } else if ([@"setDelayForSyncingLocalChanges" isEqualToString:call.method]){
-          
+        
         NSNumber *delay = call.arguments[@"delay"];
         
-          if (delay == nil || [delay doubleValue] < 0) {
+        if (delay == nil || [delay doubleValue] < 0) {
             result([FlutterError errorWithCode:@"InvalidArgument"
-            message:@"Delay must be a positive number"
-            details:nil]);
+                                       message:@"Delay must be a positive number"
+                                       details:nil]);
             return;
-          }
-
+        }
+        
         // if pdfViewController is an instance of InstantDocumentViewController, then we can set the delay
         if ([pdfViewController isKindOfClass:[InstantDocumentViewController class]]) {
             InstantDocumentViewController *instantDocumentViewController = (InstantDocumentViewController *)pdfViewController;
@@ -130,12 +130,12 @@
             result(@(YES));
         } else {
             result([FlutterError errorWithCode:@"InvalidArgument"
-            message:@"Delay can only be set for Instant documents"
-            details:nil]);
+                                       message:@"Delay can only be set for Instant documents"
+                                       details:nil]);
         }
         
-     } else if ([@"setListenToServerChanges" isEqualToString:call.method]){
-         BOOL listenToServerChanges = [call.arguments[@"listen"] boolValue];
+    } else if ([@"setListenToServerChanges" isEqualToString:call.method]){
+        BOOL listenToServerChanges = [call.arguments[@"listen"] boolValue];
         
         if ([pdfViewController isKindOfClass:[InstantDocumentViewController class]]) {
             InstantDocumentViewController *instantDocumentViewController = (InstantDocumentViewController *)pdfViewController;
@@ -143,10 +143,10 @@
             result(@(YES));
         } else {
             result([FlutterError errorWithCode:@"InvalidArgument"
-            message:@"listenToServerChanges can only be set for Instant documents"
-            details:nil]);
+                                       message:@"listenToServerChanges can only be set for Instant documents"
+                                       details:nil]);
         }
-
+        
     } else if ([@"syncAnnotations" isEqualToString:call.method]){
         // if pdfViewController is an instance of InstantDocumentViewController, then we can set the delay
         if ([pdfViewController isKindOfClass:[InstantDocumentViewController class]]) {
@@ -155,8 +155,8 @@
             result(@(YES));
         } else {
             result([FlutterError errorWithCode:@"InvalidArgument"
-            message:@"syncAnnotations can only be called on Instant document"
-            details:nil]);
+                                       message:@"syncAnnotations can only be called on Instant document"
+                                       details:nil]);
         }
     }else if ([@"setAnnotationPresetConfigurations" isEqualToString:call.method]) {
         [AnnotationsPresetConfigurations setConfigurationsWithAnnotationPreset:call.arguments[@"annotationConfigurations"]];
@@ -191,6 +191,40 @@
         NSArray<PSPDFFormElement *> *formFields = pdfViewController.document.formParser.forms;
         NSArray<NSDictionary *>  *formFieldsJson = [FormHelper convertFormFieldsWithFormFields:formFields];
         result(formFieldsJson);
+    } else if ([@"jumpToPage" isEqualToString:call.method]) {
+        @try {
+            PSPDFPageIndex pageIndex = [call.arguments[@"pageIndex"] longLongValue];
+            [pdfViewController setPageIndex:pageIndex animated:YES];
+            result(@(YES));
+        } @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
+        }
+    } else if ([@"isShowingTwoPages" isEqualToString:call.method]) {
+        BOOL showingTwoPages = pdfViewController.documentViewController.layout.spreadMode != PSPDFDocumentViewLayoutSpreadModeSingle;
+            result(@(showingTwoPages));
+    } else if([@"enterAnnotationCreationMode" isEqualToString:call.method]){
+        @try {
+            NSString *authorName = call.arguments[@"authorName"];
+            PSPDFUsernameHelper.defaultAnnotationUsername = authorName;
+            
+            PSPDFDocument *document = pdfViewController.document;
+            if (!document || !document.isValid) {
+                result([FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil]);
+                return;
+            }
+            document.defaultAnnotationUsername = authorName;
+            
+            [pdfViewController.annotationToolbarController updateHostView:nil container:nil viewController:pdfViewController];
+            
+            [pdfViewController.annotationToolbarController showToolbarAnimated:YES completion:^(BOOL finished) {
+                if (finished) {
+                    [pdfViewController.annotationStateManager setState:PSPDFAnnotationStringInk variant:PSPDFAnnotationVariantStringInkPen];
+                }
+            }];
+            result(@(YES));
+        } @catch (NSException *exception) {
+            result([FlutterError errorWithCode:@"" message:exception.reason details:nil]);
+        }
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -200,7 +234,7 @@
 
 + (nullable PSPDFDocument *)documentFromPath:(NSString *)path {
     NSURL *url;
-
+    
     if ([path hasPrefix:@"/"]) {
         url = [NSURL fileURLWithPath:path];
     } else {
@@ -210,7 +244,7 @@
     if (url == nil) {
         return nil;
     }
-
+    
     if ([PspdfkitFlutterHelper isImageDocument:path]) {
         return [[PSPDFImageDocument alloc] initWithImageURL:url];
     } else {
@@ -245,12 +279,12 @@
         NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
         writableFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
     }
-
+    
     NSFileManager *fileManager = NSFileManager.defaultManager;
     if (override) {
         [fileManager removeItemAtURL:writableFileURL error:NULL];
     }
-
+    
     // If we don't have a writable file already, we move the provided file to the ~/Documents folder.
     if (![fileManager fileExistsAtPath:(NSString *)writableFileURL.path]) {
         // Create the folder where the writable file will be saved.
@@ -259,7 +293,7 @@
             NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
             return nil;
         }
-
+        
         // Copy the provided file to a writable location if it exists.
         NSURL *fileURL = [self fileURLWithPath:path];
         NSError *copyError;
@@ -292,7 +326,7 @@
     if (!toolbarTitle) {
         return;
     }
-
+    
     // We allow setting a null title.
     pdfViewController.title = (id)toolbarTitle == NSNull.null ? nil : toolbarTitle;
 }
@@ -308,7 +342,7 @@
             [leftItems addObject:barButtonItem];
         }
     }
-
+    
     [pdfViewController.navigationItem setLeftBarButtonItems:[leftItems copy] animated:NO];
 }
 
@@ -323,7 +357,7 @@
             [rightItems addObject:barButtonItem];
         }
     }
-
+    
     [pdfViewController.navigationItem setRightBarButtonItems:[rightItems copy] animated:NO];
 }
 
@@ -367,17 +401,17 @@
 
 + (id)setFormFieldValue:(NSString *)value forFieldWithFullyQualifiedName:(NSString *)fullyQualifiedName forViewController:(PSPDFViewController *)pdfViewController {
     PSPDFDocument *document = pdfViewController.document;
-
+    
     if (!document || !document.isValid) {
         FlutterError *error = [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
         return error;
     }
-
+    
     if (fullyQualifiedName == nil || fullyQualifiedName.length == 0) {
         FlutterError *error = [FlutterError errorWithCode:@"" message:@"Fully qualified name may not be nil or empty." details:nil];
         return error;
     }
-
+    
     BOOL success = NO;
     for (PSPDFFormElement *formElement in document.formParser.forms) {
         if ([formElement.fullyQualifiedFieldName isEqualToString:fullyQualifiedName]) {
@@ -404,12 +438,12 @@
             break;
         }
     }
-
+    
     if (!success) {
         FlutterError *error = [FlutterError errorWithCode:@"" message:[NSString stringWithFormat:@"Error while searching for a form element with name %@.", fullyQualifiedName] details:nil];
         return error;
     }
-
+    
     return @(YES);
 }
 
@@ -418,7 +452,7 @@
         FlutterError *error = [FlutterError errorWithCode:@"" message:@"Fully qualified name may not be nil or empty." details:nil];
         return error;
     }
-
+    
     PSPDFDocument *document = pdfViewController.document;
     id formFieldValue = nil;
     for (PSPDFFormElement *formElement in document.formParser.forms) {
@@ -427,12 +461,12 @@
             break;
         }
     }
-
+    
     if (formFieldValue == nil) {
         FlutterError *error = [FlutterError errorWithCode:@"" message:[NSString stringWithFormat:@"Error while searching for a form element with name %@.", fullyQualifiedName] details:nil];
         return error;
     }
-
+    
     return formFieldValue;
 }
 
@@ -442,31 +476,31 @@
     PSPDFAnnotationChange change = [PspdfkitFlutterConverter annotationChangeFromString:processingMode];
     NSURL *processedDocumentURL = [PspdfkitFlutterHelper writableFileURLWithPath:destinationPath override:YES copyIfNeeded:NO];
     PSPDFAnnotationType annotationType = [PspdfkitFlutterConverter annotationTypeFromString:type];
-
+    
     if (!processedDocumentURL) {
         return [FlutterError errorWithCode:@"" message:@"Could not create a new PDF file at the given path." details:nil];
     }
-
+    
     PSPDFDocument *document = pdfViewController.document;
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     // Create a processor configuration with the current document.
     PSPDFProcessorConfiguration *configuration = [[PSPDFProcessorConfiguration alloc] initWithDocument:document];
-
+    
     // Modify annotations.
     [configuration modifyAnnotationsOfTypes:annotationType change:change];
-
+    
     // Create the PDF processor and write the processed file.
     PSPDFProcessor *processor = [[PSPDFProcessor alloc] initWithConfiguration:configuration securityOptions:nil];
-
+    
     NSError *error;
     [processor writeToFileURL:processedDocumentURL error:&error];
     if (error) {
         return [FlutterError errorWithCode:@"" message:@"Error writing to PDF file." details:error.localizedDescription];
     }
-
+    
     return @(YES);
 }
 
@@ -477,26 +511,26 @@
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     NSData *data;
     if ([jsonAnnotation isKindOfClass:NSString.class]) {
         data = [jsonAnnotation dataUsingEncoding:NSUTF8StringEncoding];
     } else if ([jsonAnnotation isKindOfClass:NSDictionary.class])  {
         data = [NSJSONSerialization dataWithJSONObject:jsonAnnotation options:0 error:nil];
     }
-
+    
     if (data == nil) {
         return [FlutterError errorWithCode:@"" message:@"Invalid JSON Annotation." details:nil];
     }
-
+    
     PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
     PSPDFAnnotation *annotation = [PSPDFAnnotation annotationFromInstantJSON:data documentProvider:documentProvider error:NULL];
     BOOL success = [document addAnnotations:@[annotation] options:nil];
-
+    
     if (!success) {
         return [FlutterError errorWithCode:@"" message:@"Failed to add annotation." details:nil];
     }
-
+    
     return @(YES);
 }
 
@@ -505,7 +539,7 @@
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     NSString *annotationUUID;
     if ([jsonAnnotation isKindOfClass:NSString.class]) {
         NSData *jsonData = [jsonAnnotation dataUsingEncoding:NSUTF8StringEncoding];
@@ -514,11 +548,11 @@
     } else if ([jsonAnnotation isKindOfClass:NSDictionary.class])  {
         if (jsonAnnotation) { annotationUUID = jsonAnnotation[@"uuid"]; }
     }
-
+    
     if (annotationUUID.length <= 0) {
         return [FlutterError errorWithCode:@"" message:@"Invalid annotation UUID." details:nil];
     }
-
+    
     BOOL success = NO;
     NSArray<PSPDFAnnotation *> *allAnnotations = [[document allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues valueForKeyPath:@"@unionOfArrays.self"];
     for (PSPDFAnnotation *annotation in allAnnotations) {
@@ -528,7 +562,7 @@
             break;
         }
     }
-
+    
     return @(success);
 }
 
@@ -537,12 +571,12 @@
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     PSPDFAnnotationType type = [PspdfkitFlutterConverter annotationTypeFromString:typeString];
-
+    
     NSArray <PSPDFAnnotation *> *annotations = [document annotationsForPageAtIndex:pageIndex type:type];
     NSArray <NSDictionary *> *annotationsJSON = [PspdfkitFlutterConverter instantJSONFromAnnotations:annotations];
-
+    
     if (annotationsJSON) {
         return annotationsJSON;
     } else {
@@ -555,11 +589,11 @@
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
     NSData *data = [document generateInstantJSONFromDocumentProvider:documentProvider error:NULL];
     NSDictionary *annotationsJSON = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:NULL];
-
+    
     if (annotationsJSON) {
         return annotationsJSON;
     }  else {
@@ -574,62 +608,62 @@
     if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)fileURL.path]) {
         return [FlutterError errorWithCode:@"" message:@"The XFDF file does not exist." details:nil];
     }
-
+    
     PSPDFDocument *document = pdfViewController.document;
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     PSPDFFileDataProvider *dataProvider = [[PSPDFFileDataProvider alloc] initWithFileURL:fileURL];
     PSPDFXFDFParser *parser = [[PSPDFXFDFParser alloc] initWithDataProvider:dataProvider documentProvider:document.documentProviders[0]];
-
+    
     NSError *error;
     [parser parseWithError:&error];
-
+    
     if (error) {
         return [FlutterError errorWithCode:@"" message:@"Error while parsing XFDF file." details:error.localizedDescription];
     }
-
+    
     // Import annotations to the document.
     NSArray <PSPDFAnnotation *> *annotations = parser.annotations;
     if (annotations) {
         [document addAnnotations:annotations options:nil];
     }
-
+    
     return @(YES);
 }
 
 + (id)exportXFDFToPath:(NSString *)path forViewController:(PSPDFViewController *)pdfViewController {
     // Always overwrite the XFDF file we export to.
     NSURL *fileURL = [PspdfkitFlutterHelper writableFileURLWithPath:path override:YES copyIfNeeded:NO];
-
+    
     if (!fileURL) {
         return [FlutterError errorWithCode:@"" message:@"Could not create a new XFDF file at the given path." details:nil];
     }
-
+    
     PSPDFDocument *document = pdfViewController.document;
     if (!document || !document.isValid) {
         return [FlutterError errorWithCode:@"" message:@"PDF document not found or is invalid." details:nil];
     }
-
+    
     // Collect all existing annotations from the document
     NSMutableArray *annotations = [NSMutableArray array];
     for (NSArray *pageAnnotations in [document allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues) {
         [annotations addObjectsFromArray:pageAnnotations];
     }
-
+    
     // Write to the XFDF file.
     NSError *error;
     PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:fileURL options:PSPDFDataSinkOptionNone error:&error];
     if (error) {
         return [FlutterError errorWithCode:@"" message:@"Error while exporting XFDF file." details:error.localizedDescription];
     }
-
+    
     [[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:document.documentProviders[0] error:&error];
     if (error) {
         return [FlutterError errorWithCode:@"" message:@"Error while exporting XFDF file." details:error.localizedDescription];
     }
-
+    
     return @(YES);
 }
 

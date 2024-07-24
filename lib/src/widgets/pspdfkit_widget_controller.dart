@@ -63,4 +63,16 @@ abstract class PspdfkitWidgetController {
   /// Sets the annotation preset configurations for the given annotation tools.
   /// @param eventName The name of the event to listen to.
   void addEventListener(String eventName, Function(dynamic) callback);
+
+  /// Programmatically jump to a specific page.
+  /// @param pageIndex The index of the page to jump to.
+  Future<bool?> jumpToPage(int pageIndex);
+
+  /// Returns true if the document is showing two pages.
+  /// This is especially useful when the page layout mode is automatic
+  Future<bool?> isShowingTwoPages();
+
+  /// Programmatically enters annotation creation mode.
+  /// @param authorName The name of the author for the annotation.
+  Future<bool?> enterAnnotationCreationMode(String authorName);
 }

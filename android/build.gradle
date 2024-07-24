@@ -32,6 +32,18 @@ rootProject.allprojects {
     }
 }
 
+buildscript {
+    ext {
+        kotlinVersion = "1.5.20"
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
@@ -39,7 +51,7 @@ android {
     namespace "com.pspdfkit.flutter.pspdfkit"
 
     compileSdk androidCompileSdkVersion
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

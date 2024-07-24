@@ -21,6 +21,9 @@ import com.pspdfkit.flutter.pspdfkit.toolbar.FlutterViewModeController
 import com.pspdfkit.flutter.pspdfkit.util.DocumentJsonDataProvider
 import com.pspdfkit.flutter.pspdfkit.util.Preconditions.requireNotNullNotEmpty
 import com.pspdfkit.flutter.pspdfkit.util.ProcessorHelper
+import com.pspdfkit.preferences.PSPDFKitPreferences
+import com.pspdfkit.ui.special_mode.controller.AnnotationTool
+import com.pspdfkit.ui.special_mode.controller.AnnotationToolVariant
 import com.pspdfkit.flutter.pspdfkit.util.addFileSchemeIfMissing
 import com.pspdfkit.flutter.pspdfkit.util.areValidIndexes
 import com.pspdfkit.flutter.pspdfkit.util.isImageDocument
@@ -423,6 +426,7 @@ internal class PSPDFKitView(
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(result::success)
             }
+
             "setAnnotationPresetConfigurations" -> {
                 try {
                     val annotationConfigurations =
@@ -481,6 +485,25 @@ internal class PSPDFKitView(
                     result.error("DocumentException", e.message, null)
                 }
             }
+
+            "jumpToPage" -> {
+                val pageIndex: Int = requireNotNull(call.argument("pageIndex"))
+                pdfUiFragment.pageIndex = pageIndex
+                result.success(true)
+            }
+
+            "isShowingTwoPages" -> {
+                val pageIndex = pdfUiFragment.pdfFragment?.pageIndex ?: -1
+                result.success(pdfUiFragment.pdfFragment?.getSiblingPageIndex(pageIndex) != -1)
+            }
+
+            "enterAnnotationCreationMode" -> {
+                val authorName: String = requireNotNull(call.argument("authorName"))
+                PSPDFKitPreferences.get(context).setAnnotationCreator(authorName)
+                pdfUiFragment.pdfFragment?.enterAnnotationCreationMode(AnnotationTool.INK, AnnotationToolVariant.fromPreset(AnnotationToolVariant.Preset.PEN))
+                result.success(true)
+            }
+
             else -> result.notImplemented()
         }
     }

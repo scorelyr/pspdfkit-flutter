@@ -77,6 +77,7 @@ class ConfigurationAdapter {
     private static final String ENABLE_DOCUMENT_EDITOR = "enableDocumentEditor";
     private static final String DARK_THEME_RESOURCE = "darkThemeResource";
     private static final String DEFAULT_THEME_RESOURCE = "defaultThemeResource";
+    private static final String RESTORE_LAST_VIEWED_PAGE = "restoreLastViewedPage";
 
     // Thumbnail Options
     private static final String SHOW_THUMBNAIL_BAR = "showThumbnailBar";
@@ -385,6 +386,11 @@ class ConfigurationAdapter {
             key = getKeyOfType(configurationMap, ENABLED_MEASUREMENT_TOOL_SNAPPING, Boolean.class);
             if (key != null) {
                 configureMeasurementToolSnappingEnabled(context,(Boolean) configurationMap.get(key));
+            }
+
+            key = getKeyOfType(configurationMap, RESTORE_LAST_VIEWED_PAGE, Boolean.class);
+            if (key != null) {
+                configureRestoreLastViewedPage((Boolean) configurationMap.get(key));
             }
         }
     }
@@ -755,6 +761,10 @@ class ConfigurationAdapter {
             return true;
         }
         return false;
+    }
+
+    private void configureRestoreLastViewedPage(boolean restoreLastViewedPage) {
+        configuration.restoreLastViewedPage(restoreLastViewedPage);
     }
 
     private static <T> void checkCast(Object object, Class<T> clazz, String key) {

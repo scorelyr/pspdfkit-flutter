@@ -8,15 +8,17 @@
 ///
 ///
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:pspdfkit_flutter/pspdfkit.dart';
+
 import 'pspdfkit_flutter_platform_interface.dart';
 
 /// An implementation of [PspdfkitFlutterPlatform] that uses method channels.
 class MethodChannelPspdfkitFlutter extends PspdfkitFlutterPlatform {
   /// The method channel used to interact with the native platform.
-  @visibleForTesting
+
   late final methodChannel = const MethodChannel('com.pspdfkit.global')
     ..setMethodCallHandler((call) => _platformCallHandler(call));
 

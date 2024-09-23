@@ -26,7 +26,7 @@ class PspdfkitWidget extends StatefulWidget {
   final dynamic configuration;
   final PspdfkitWidgetCreatedCallback? onPspdfkitWidgetCreated;
   final PdfDocumentLoadedCallback? onPdfDocumentLoaded;
-  final PdfDocumentLoadFailedCallback? onPdfDocumentLoadError;
+  final PdfDocumentLoadFailedCallback? onPdfDocumentError;
   final PageChangedCallback? onPageChanged;
   final VoidCallback? onExitAnnotationCreationMode;
 
@@ -36,7 +36,7 @@ class PspdfkitWidget extends StatefulWidget {
     this.configuration,
     this.onPspdfkitWidgetCreated,
     this.onPdfDocumentLoaded,
-    this.onPdfDocumentLoadError,
+    this.onPdfDocumentError,
     this.onPageChanged,
     this.onExitAnnotationCreationMode,
   }) : super(key: key);
@@ -97,7 +97,7 @@ class _PspdfkitWidgetState extends State<PspdfkitWidget> {
         widget.onPdfDocumentLoaded
             ?.call(PdfDocumentWeb(documentId: '', instance: value));
       }).catchError((error) {
-        widget.onPdfDocumentLoadError?.call(error.toString());
+        widget.onPdfDocumentError?.call(error.toString());
         throw Exception('Failed to load: $error');
       });
     });
